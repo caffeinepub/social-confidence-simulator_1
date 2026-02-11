@@ -1,0 +1,293 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-home-dashboard-screen-with-app-branding-and-scenario-selection-for-job-interview-first-date-party-networking-event-plus-a-start-practice-now-button-that-starts-a-default-scenario-for-first-time-users",
+      "featureTitle": "Create a Home/Dashboard screen with app branding and scenario selection for: Job Interview, First Date, Party, Networking Event, plus a “Start Practice Now” button that starts a default scenario for first-time users.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/components/ScenarioCard.tsx",
+        "frontend/src/lib/persistence.ts",
+        "frontend/src/lib/scenarios.ts",
+        "frontend/src/pages/DashboardPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-conversation-screen-with-a-3-panel-layout-1-ai-avatar-panel-with-mood-expression-display-2-chat-style-conversation-history-ai-and-user-messages-visually-distinct-and-3-metrics-feedback-panel-showing-anxiety-confidence-and-tips",
+      "featureTitle": "Implement the Conversation screen with a 3-panel layout: (1) AI Avatar panel with mood/expression display, (2) chat-style conversation history (AI and user messages visually distinct), and (3) metrics & feedback panel showing anxiety/confidence and tips.",
+      "files": [
+        "frontend/src/components/ChatComposer.tsx",
+        "frontend/src/components/ChatTranscript.tsx",
+        "frontend/src/components/MetricsPanel.tsx",
+        "frontend/src/hooks/useConversationSession.ts",
+        "frontend/src/lib/analysis.ts",
+        "frontend/src/pages/ConversationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-voice-input-option-using-in-browser-speech-to-text-web-speech-api-to-populate-send-the-user-s-message-including-a-microphone-button-and-clear-states-idle-listening-error",
+      "featureTitle": "Add a voice input option using in-browser speech-to-text (Web Speech API) to populate/send the user’s message, including a microphone button and clear states (idle/listening/error).",
+      "files": [
+        "frontend/src/components/ChatComposer.tsx",
+        "frontend/src/components/VoiceInputButton.tsx",
+        "frontend/src/hooks/useSpeechToText.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-rule-based-anxiety-confidence-analysis-on-user-text-and-derived-voice-timing-metrics-from-the-frontend-if-available-including-filler-word-count-hesitations-self-doubt-phrases-sentence-length-and-an-overall-anxiety-confidence-score-0-100",
+      "featureTitle": "Implement rule-based anxiety/confidence analysis on user text (and derived voice timing metrics from the frontend if available), including: filler word count, hesitations, self-doubt phrases, sentence length, and an overall anxiety/confidence score (0–100).",
+      "files": [
+        "frontend/src/components/MetricsPanel.tsx",
+        "frontend/src/lib/analysis.ts",
+        "frontend/src/pages/ConversationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-retry-response-flow-that-lets-the-user-re-attempt-their-last-message-and-immediately-see-updated-metrics-tips-without-losing-the-full-session-context",
+      "featureTitle": "Add a “Retry response” flow that lets the user re-attempt their last message and immediately see updated metrics/tips without losing the full session context.",
+      "files": [
+        "frontend/src/components/ChatTranscript.tsx",
+        "frontend/src/components/RetryResponseButton.tsx",
+        "frontend/src/hooks/useConversationSession.ts",
+        "frontend/src/pages/ConversationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-a-session-summary-view-shown-when-a-session-ends-including-full-transcript-a-confidence-score-progression-chart-a-personalized-tips-summary-and-an-option-to-save-the-session-for-progress-tracking",
+      "featureTitle": "Implement a Session Summary view shown when a session ends, including: full transcript, a confidence score progression chart, a personalized tips summary, and an option to save the session for progress tracking.",
+      "files": [
+        "frontend/src/components/ConfidenceChart.tsx",
+        "frontend/src/pages/ConversationPage.tsx",
+        "frontend/src/pages/SessionSummaryPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-progress-tracker-that-visualizes-improvement-across-multiple-saved-sessions-e-g-mini-chart-and-session-history-list-and-is-accessible-from-the-dashboard",
+      "featureTitle": "Add a Progress Tracker that visualizes improvement across multiple saved sessions (e.g., mini chart and session history list) and is accessible from the dashboard.",
+      "files": [
+        "frontend/src/components/ProgressTracker.tsx",
+        "frontend/src/pages/DashboardPage.tsx",
+        "frontend/src/pages/SessionSummaryPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-settings-area-with-avatar-type-selection-cartoon-3d-gif-as-ui-choices-implemented-at-least-with-cartoon-gif-swapping-voice-feedback-on-off-language-selection-ui-text-remains-english-language-selection-may-be-a-stored-preference-without-full-localization-and-a-dark-light-mode-toggle",
+      "featureTitle": "Add a Settings area with: avatar type selection (cartoon / 3D / GIF as UI choices, implemented at least with cartoon/GIF swapping), voice feedback on/off, language selection (UI text remains English; language selection may be a stored preference without full localization), and a dark/light mode toggle.",
+      "files": [
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/hooks/usePreferences.ts",
+        "frontend/src/pages/ConversationPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-avatar-mood-expression-updates-driven-by-the-computed-confidence-anxiety-state-neutral-confident-anxious-encouraging-including-smooth-transitions-and-optional-speech-bubble-animation-for-ai-dialogue",
+      "featureTitle": "Implement avatar mood/expression updates driven by the computed confidence/anxiety state (neutral, confident, anxious, encouraging), including smooth transitions and optional speech bubble animation for AI dialogue.",
+      "files": [
+        "frontend/src/components/AvatarPanel.tsx",
+        "frontend/src/lib/analysis.ts",
+        "frontend/src/pages/ConversationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-persist-sessions-and-user-preferences-in-the-motoko-canister-single-actor-so-progress-and-summaries-remain-available-across-devices-for-the-same-internet-identity-principal-if-ii-is-already-in-the-template-or-otherwise-persist-locally-as-a-fallback-for-unauthenticated-users",
+      "featureTitle": "Persist sessions and user preferences in the Motoko canister (single-actor) so progress and summaries remain available across devices for the same Internet Identity principal (if II is already in the template) or otherwise persist locally as a fallback for unauthenticated users.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/LoginButton.tsx",
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "frontend/src/components/ProgressTracker.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-cohesive-modern-visual-theme-and-apply-it-consistently-across-dashboard-conversation-summary-and-settings-screens-avoid-blue-purple-as-the-primary-palette",
+      "featureTitle": "Create a cohesive, modern visual theme and apply it consistently across dashboard, conversation, summary, and settings screens (avoid blue/purple as the primary palette).",
+      "files": [
+        "frontend/src/components/AppLayout.tsx",
+        "frontend/src/index.css",
+        "frontend/src/pages/ConversationPage.tsx",
+        "frontend/src/pages/DashboardPage.tsx",
+        "frontend/src/pages/SessionSummaryPage.tsx",
+        "frontend/src/pages/SettingsPage.tsx",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-generated-static-image-assets-logo-scenario-icons-avatar-states-to-the-frontend-and-render-them-in-the-corresponding-ui-locations-store-under-frontend-public-assets-generated-and-reference-them-directly-from-the-frontend",
+      "featureTitle": "Add generated static image assets (logo, scenario icons, avatar states) to the frontend and render them in the corresponding UI locations (store under frontend/public/assets/generated and reference them directly from the frontend).",
+      "files": [
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/components/AvatarPanel.tsx",
+        "frontend/src/components/ScenarioCard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-optional-demo-features-add-qr-codes-on-scenario-cards-that-encode-a-url-to-open-the-app-with-the-scenario-pre-selected-and-add-an-optional-ai-voice-playback-feature-that-can-read-back-suggested-responses-using-browser-text-to-speech-no-external-services",
+      "featureTitle": "(Optional demo features) Add QR codes on scenario cards that encode a URL to open the app with the scenario pre-selected, and add an optional AI voice playback feature that can read back suggested responses using browser text-to-speech (no external services).",
+      "files": [
+        "frontend/src/components/MetricsPanel.tsx",
+        "frontend/src/components/ScenarioCard.tsx",
+        "frontend/src/hooks/useTextToSpeech.ts",
+        "frontend/src/lib/deeplinks.ts",
+        "frontend/src/pages/DashboardPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

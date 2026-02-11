@@ -1,0 +1,177 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-11T05:16:24.773Z",
+  "summary": "The diff adds a new Motoko canister actor with scenario/profile/access-control scaffolding and a React/TanStack Router UI with dashboard/conversation/summary/settings routes plus components for avatar, chat, metrics, progress tracking, QR display, retry button, speech-to-text, and preferences. However, several core requirements around required scenarios, backend-driven deterministic conversation flow, rule-based analysis in the backend, and canister persistence of sessions/preferences are not evidenced (and some functionality is implemented client-side instead). There are also features added that were not requested (access control/admin token initialization, extra scenarios, caffeine.ai footer).",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Dashboard scenario selection must include exactly: Job Interview, First Date, Party, Networking Event; “Start Practice Now” must start a deterministic default scenario for first-time users.",
+      "reason": "Backend scenario list shown does not include “First Date” or “Party”, and includes other scenarios not requested. The diff snippet does not show any “Start Practice Now” implementation or deterministic default selection logic.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Backend must implement scenario-specific conversation flow APIs: start session (returns initial AI message) and submit user message (returns next AI message, updated metrics, tips, avatar mood); deterministic per scenario; no external LLM.",
+      "reason": "Frontend hook generates the initial AI message and follow-up AI response locally (via template strings and `generateAIResponse`), rather than calling a backend API that returns AI message + metrics/tips/mood. The shown backend snippet exposes scenarios and profile/session summaries, but no evidenced start/submit conversation endpoints returning the required bundle.",
+      "evidence": [
+        "frontend/src/hooks/useConversationSession.ts",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Rule-based anxiety/confidence analysis must be implemented (both), with backend computing filler tokens list, hesitations, self-doubt, sentence length, WPM (voice or estimated), and returning score (0–100) plus mood; UI displays and updates per turn.",
+      "reason": "The analysis is performed client-side (`analyzeMessage`, `generateTips`) and confidence is scaled locally (`analysis.confidenceScore * 100`). No evidence in the backend snippet of computing/returning filler-token lists, WPM estimation, or mood as part of the message-submission API response.",
+      "evidence": [
+        "frontend/src/hooks/useConversationSession.ts",
+        "frontend/src/components/MetricsPanel.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Retry response flow must replace/version the last user message and recompute metrics/tips without losing session context, with coherent transcript indication.",
+      "reason": "A `RetryResponseButton` component exists, but the diff provides no evidence of transcript replacement/versioning logic, backend support, or UI indication handling for retried content.",
+      "evidence": [
+        "frontend/src/components/RetryResponseButton.tsx",
+        "frontend/src/hooks/useConversationSession.ts"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "Session Summary view must include full transcript, confidence progression chart, personalized tips summary, and an option to save the session for progress tracking.",
+      "reason": "A `ConfidenceChart` component is added, and a summary route/page exists, but the diff does not show SessionSummaryPage implementation or any save-session flow tying the summary to persistent storage for later retrieval.",
+      "evidence": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/ConfidenceChart.tsx"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Progress Tracker must visualize improvement across multiple saved sessions and allow opening saved summaries from the dashboard.",
+      "reason": "`ProgressTracker` exists and navigates to summaries, but it depends on `useGetProgressStats` and authenticated backend data. The diff snippet does not evidence that sessions are actually saved/completed in a way that populates progress across multiple sessions (nor the required saved-session retrieval flow).",
+      "evidence": [
+        "frontend/src/components/ProgressTracker.tsx",
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "requirement": "Settings must include avatar type selection (cartoon/GIF swapping), voice feedback toggle, language selection (English UI), and dark/light mode toggle that persists across reloads; reachable from dashboard and conversation screens.",
+      "reason": "ThemeProvider is present and `usePreferences` stores avatarType/voiceFeedback/language locally, but the diff does not include `SettingsPage` content or any explicit dark/light toggle persistence and UI controls for these settings.",
+      "evidence": [
+        "frontend/src/App.tsx",
+        "frontend/src/hooks/usePreferences.ts"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "Persist sessions and user preferences in the Motoko canister keyed by Internet Identity principal (with local fallback for unauthenticated); backend APIs to list sessions, fetch by id, and save completed sessions; persists across devices when authenticated.",
+      "reason": "Preferences are stored in localStorage (`usePreferences`), and conversation state uses local persistence helpers (e.g., `saveLocalSession`) rather than canister-backed persistence. The backend snippet shows session maps and owner mapping, but the required explicit APIs (list/fetch/save completed session) and preference persistence in the canister are not evidenced in the provided diff excerpt.",
+      "evidence": [
+        "frontend/src/hooks/usePreferences.ts",
+        "frontend/src/hooks/useConversationSession.ts",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "requirement": "All required generated static image assets must be present under frontend/public/assets/generated (logo, 4 scenario icons, 4 avatar mood images) and used in corresponding UI locations.",
+      "reason": "Components reference the generated logo and avatar mood images, but the diff does not show the actual image files added under `frontend/public/assets/generated` (the diff notes omitted added files). Also, scenario icon usage for the four required scenarios cannot be confirmed because the dashboard page is not shown.",
+      "evidence": [
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/components/AvatarPanel.tsx"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "requirement": "QR codes on scenario cards must encode a URL with scenario query parameter, and opening that URL must pre-select scenario and open conversation; optional browser TTS playback controlled by settings.",
+      "reason": "`QRCodeDisplay` renders a placeholder canvas (explicitly notes a production library would be used) and does not evidence encoding a real QR code. Deep-link preselection behavior is not evidenced in routing or conversation initialization. TTS is partially present in MetricsPanel, but its control via settings UI is not evidenced.",
+      "evidence": [
+        "frontend/src/components/QRCodeDisplay.tsx",
+        "frontend/src/components/ScenarioCard.tsx",
+        "frontend/src/components/MetricsPanel.tsx",
+        "frontend/src/App.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Access control / admin initialization via secret URL parameter (`caffeineAdminToken`) and authorization checks for profile/session summary APIs.",
+      "reason": "The BuildRequest does not request role-based access control, admin tokens, or secret URL parameters; it only mentions Internet Identity as allowed auth.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useActor.ts"
+      ]
+    },
+    {
+      "description": "User profile setup modal requiring a name (profile creation flow).",
+      "reason": "The BuildRequest does not include collecting/storing user names or a profile onboarding modal; only sessions, progress, and preferences are required.",
+      "evidence": [
+        "frontend/src/components/ProfileSetupModal.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Additional unrequested scenarios (Presentation, Negotiation, Speech Anxiety) and mismatch with required scenario set.",
+      "reason": "The BuildRequest specifies exactly four scenarios (Job Interview, First Date, Party, Networking Event). The backend defines different/additional scenarios.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Footer attribution/link to caffeine.ai including decorative heart symbol.",
+      "reason": "Not requested by the BuildRequest and introduces extra user-facing content.",
+      "evidence": [
+        "frontend/src/components/AppLayout.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AppHeader.tsx",
+    "frontend/src/components/AppLayout.tsx",
+    "frontend/src/components/AvatarPanel.tsx",
+    "frontend/src/components/ChatComposer.tsx",
+    "frontend/src/components/ChatTranscript.tsx",
+    "frontend/src/components/ConfidenceChart.tsx",
+    "frontend/src/components/LoginButton.tsx",
+    "frontend/src/components/MetricsPanel.tsx",
+    "frontend/src/components/ProfileSetupModal.tsx",
+    "frontend/src/components/ProgressTracker.tsx",
+    "frontend/src/components/QRCodeDisplay.tsx",
+    "frontend/src/components/RetryResponseButton.tsx",
+    "frontend/src/components/ScenarioCard.tsx",
+    "frontend/src/components/VoiceInputButton.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useConversationSession.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/usePreferences.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useSpeechToText.ts",
+    "frontend/src/hooks/useTextToSpeech.ts",
+    "frontend/src/index.css",
+    "frontend/src/lib/analysis.ts",
+    "frontend/src/lib/deeplinks.ts",
+    "frontend/src/lib/persistence.ts",
+    "frontend/src/lib/scenarios.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/ConversationPage.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/SessionSummaryPage.tsx",
+    "frontend/src/pages/SettingsPage.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

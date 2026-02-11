@@ -1,0 +1,499 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Social Confidence Simulator (React + TS): dashboard, practice conversation, metrics, summary, progress, settings",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Create a branded dashboard with scenario selection and a deterministic “Start Practice Now” default for first-time users.",
+      "acceptanceCriteria": [
+        "Home screen shows app title “Social Confidence Simulator” and a logo.",
+        "Four scenario cards/buttons are visible and selectable on desktop and tablet breakpoints.",
+        "“Start Practice Now” starts a session using a deterministic default scenario when no prior sessions exist (e.g., stored locally or in canister).",
+        "Selecting a scenario navigates into the conversation screen with that scenario active."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the app shell and route wiring for Dashboard, Conversation, Summary, and Settings; ensure navigation from scenario selection goes to the Conversation screen with the selected scenario active."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "create",
+          "description": "Implement the Home/Dashboard UI with branding header (logo + title), four scenario cards (Job Interview, First Date, Party, Networking Event), and a “Start Practice Now” action that uses a deterministic default scenario when no prior sessions exist. Use stored session history (local fallback) to detect first-time users."
+        },
+        {
+          "path": "frontend/src/lib/scenarios.ts",
+          "operation": "create",
+          "description": "Define the four scenarios with stable IDs/titles and deterministic default selection logic used by the dashboard and deep-links."
+        },
+        {
+          "path": "frontend/src/lib/persistence.ts",
+          "operation": "create",
+          "description": "Add local persistence helpers (localStorage) for session history existence checks and basic saved session retrieval used for first-time detection and navigation state."
+        },
+        {
+          "path": "frontend/src/components/ScenarioCard.tsx",
+          "operation": "create",
+          "description": "Create a reusable scenario card component to keep the dashboard layout consistent and responsive. Compose from existing shadcn/ui primitives (do not edit frontend/src/components/ui). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/AppHeader.tsx",
+          "operation": "create",
+          "description": "Add a shared header with logo/title and quick access to Settings. Compose from existing shadcn/ui primitives (do not edit frontend/src/components/ui). Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Implement the Conversation screen with avatar, chat history/input, and live metrics & tips panels in a responsive 3-panel layout.",
+      "acceptanceCriteria": [
+        "Conversation layout clearly contains avatar, chat history, and metrics/tips panels on desktop; stacks sensibly on tablet.",
+        "Chat history renders AI messages and user messages with different styling and clear attribution.",
+        "Chat input area includes a text input with placeholder “Type your response here…”.",
+        "Metrics panel shows a single anxiety/confidence score (0–100) with a visual meter and lists key metrics (WPM, filler words count, hesitations).",
+        "Feedback panel displays 1–3 actionable tips that update after each user message."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "create",
+          "description": "Build the Conversation screen layout (avatar panel, chat panel with input, metrics/tips panel) and wire it to scenario state from navigation/query param; render AI vs user messages distinctly; show input placeholder “Type your response here…”."
+        },
+        {
+          "path": "frontend/src/components/ChatTranscript.tsx",
+          "operation": "create",
+          "description": "Render the chat-style conversation history with visually distinct AI and user message bubbles, timestamps/attribution, and stable ordering."
+        },
+        {
+          "path": "frontend/src/components/ChatComposer.tsx",
+          "operation": "create",
+          "description": "Provide the message composer UI (text input + send) with placeholder “Type your response here…”, and expose hooks/callbacks for voice input integration and retry flow."
+        },
+        {
+          "path": "frontend/src/components/MetricsPanel.tsx",
+          "operation": "create",
+          "description": "Implement the metrics & feedback panel with a 0–100 confidence meter and lists for WPM, filler words count, hesitations, plus a tips list that updates after each user message."
+        },
+        {
+          "path": "frontend/src/lib/analysis.ts",
+          "operation": "create",
+          "description": "Add frontend rule-based analysis utilities to compute filler words, hesitations, estimated WPM (typed via timestamps; voice via timing), and a 0–100 confidence score plus mood category used by the metrics panel and avatar mood updates."
+        },
+        {
+          "path": "frontend/src/hooks/useConversationSession.ts",
+          "operation": "create",
+          "description": "Create a React hook to manage the current in-progress session state (messages, turn-by-turn confidence scores, derived metrics/tips) and integrate request/response calls via useActor + React Query when saving/listing is needed."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add Web Speech API voice input to populate/send chat input with clear idle/listening/error states and a no-support fallback.",
+      "acceptanceCriteria": [
+        "Microphone button starts/stops speech recognition on supported browsers.",
+        "Recognized text is shown in the input box before sending (or is sent on stop, per UI choice) and can be edited.",
+        "If the browser does not support speech recognition, the UI shows an English fallback message and disables the mic button.",
+        "Voice input does not require any external service integration."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useSpeechToText.ts",
+          "operation": "create",
+          "description": "Implement a Web Speech API hook that exposes states (idle/listening/error/unsupported) and recognized transcript updates, without any external service dependencies."
+        },
+        {
+          "path": "frontend/src/components/VoiceInputButton.tsx",
+          "operation": "create",
+          "description": "Add a microphone button component with clear UI states and an English unsupported fallback message; integrate with the chat composer to populate/edit recognized text before sending."
+        },
+        {
+          "path": "frontend/src/components/ChatComposer.tsx",
+          "operation": "modify",
+          "description": "Wire the voice input option into the message composer: show mic control, reflect listening/error states, and ensure recognized text lands in the input field and remains editable."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Compute and display rule-based anxiety/confidence metrics (text + optional voice timing) and keep UI updated each turn.",
+      "acceptanceCriteria": [
+        "For each user message, the system computes filler word count and a list of matched filler tokens (e.g., “um”, “uh”, “like”).",
+        "System computes a simple hesitations metric from text (e.g., ellipses, repeated words) and optionally from frontend-provided pause counts when voice input is used.",
+        "System computes words-per-minute (WPM) when voice input is used and otherwise estimates WPM from typed timestamps.",
+        "System produces a single score (0–100) where higher means more confident (or clearly label direction) and returns a corresponding mood category (e.g., anxious/neutral/confident/encouraging).",
+        "Metrics returned by backend are displayed in the UI and update after each turn."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/analysis.ts",
+          "operation": "modify",
+          "description": "Implement/extend rule-based analysis to compute filler tokens, filler count, hesitations signals (ellipsis/repetition), WPM (voice duration or typed timing), and a 0–100 confidence score with a labeled direction plus a derived mood category."
+        },
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "modify",
+          "description": "After each user turn, recompute analysis metrics/tips and update the metrics panel and avatar mood; include optional voice timing metrics when voice input is used."
+        },
+        {
+          "path": "frontend/src/components/MetricsPanel.tsx",
+          "operation": "modify",
+          "description": "Render the computed confidence score (0–100) with a clear visual meter and display WPM, filler word count, hesitations, plus 1–3 actionable tips that update after each user message."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add a “Retry response” flow to re-attempt the last user message and immediately see updated metrics/tips while preserving session context.",
+      "acceptanceCriteria": [
+        "UI provides a visible “Retry response” action after a user message.",
+        "Retrying replaces (or clearly versions) the last user message in the session and recomputes metrics/tips for that turn.",
+        "Chat transcript remains coherent (no broken ordering); the UI clearly indicates the retried message if both versions are preserved."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/RetryResponseButton.tsx",
+          "operation": "create",
+          "description": "Create a visible “Retry response” action component to appear after the most recent user message and trigger a retry/replace flow."
+        },
+        {
+          "path": "frontend/src/hooks/useConversationSession.ts",
+          "operation": "modify",
+          "description": "Add session-state support for retrying the last user turn by replacing or versioning the last user message, recomputing analysis metrics/tips, and keeping transcript order coherent."
+        },
+        {
+          "path": "frontend/src/components/ChatTranscript.tsx",
+          "operation": "modify",
+          "description": "Display retried messages coherently: either show only the replacement or clearly mark the previous version as superseded without breaking message order."
+        },
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "modify",
+          "description": "Wire the “Retry response” UI to the session hook so a user can re-attempt the last message and see metrics/tips update immediately."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Create a Session Summary view with transcript, confidence progression chart, tips summary, and a save option for progress tracking.",
+      "acceptanceCriteria": [
+        "User can end a session via a clear UI control, which navigates to a summary screen.",
+        "Summary shows the full transcript (AI + user messages).",
+        "Summary includes a chart of confidence/anxiety score over time (turn-by-turn).",
+        "Summary lists a compact set of personalized tips derived from the session’s tips.",
+        "User can save the session; saved sessions are retrievable later for progress tracking."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SessionSummaryPage.tsx",
+          "operation": "create",
+          "description": "Implement the Session Summary view: render full transcript, a turn-by-turn confidence progression chart, and a compact personalized tips summary; include a save action to persist the session (canister when authenticated; local fallback otherwise)."
+        },
+        {
+          "path": "frontend/src/components/ConfidenceChart.tsx",
+          "operation": "create",
+          "description": "Create a lightweight chart component (e.g., SVG/Canvas) to visualize confidence score progression over turns without requiring WebSockets or external services."
+        },
+        {
+          "path": "frontend/src/hooks/useSavedSessions.ts",
+          "operation": "create",
+          "description": "Add React Query-powered hooks to save a completed session and retrieve sessions later; use backend actor methods when authenticated and local persistence fallback when not."
+        },
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "modify",
+          "description": "Add a clear “End session” control that finalizes current session state and navigates to the Summary screen with the session data needed for transcript and chart rendering."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Add a Progress Tracker section on the dashboard with a mini chart and session history list; allow opening a saved session summary.",
+      "acceptanceCriteria": [
+        "Dashboard includes a progress section showing at least one chart/summary derived from saved sessions.",
+        "User can view a list of past sessions with date/time, scenario, and an aggregate score.",
+        "Selecting a past session opens its saved summary (transcript + charts + tips)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/ProgressTracker.tsx",
+          "operation": "create",
+          "description": "Implement the Progress Tracker UI: mini trend chart/summary derived from saved sessions and a clickable session history list (date/time, scenario, aggregate score)."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Add a Progress section to the dashboard that renders ProgressTracker and wires selection of a past session to open the saved summary view."
+        },
+        {
+          "path": "frontend/src/pages/SessionSummaryPage.tsx",
+          "operation": "modify",
+          "description": "Support opening an existing saved session summary (read-only mode) when navigated from the Progress Tracker session history."
+        },
+        {
+          "path": "frontend/src/hooks/useSavedSessions.ts",
+          "operation": "modify",
+          "description": "Add list/fetch helpers for session history (authenticated canister when available; otherwise local) to power the Progress Tracker and saved summary navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Add Settings reachable from dashboard and conversation: avatar type selection, voice feedback toggle, language selection (stored), and dark/light mode toggle with persistence.",
+      "acceptanceCriteria": [
+        "Settings screen/modal is reachable from the dashboard and conversation screens.",
+        "Dark/light mode toggles the UI theme and persists across reloads.",
+        "Avatar type selection changes the avatar presentation used in the conversation screen (at minimum: different static/animated assets for cartoon vs GIF).",
+        "Voice feedback toggle persists and controls whether the app plays any voice output (if implemented).",
+        "Language selection is present and persisted, while all visible UI text remains English unless further localization is implemented later."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "create",
+          "description": "Implement a Settings view for avatar type selection (cartoon/GIF at minimum), voice feedback on/off, language selection (persisted but UI text remains English), and dark/light toggle."
+        },
+        {
+          "path": "frontend/src/hooks/usePreferences.ts",
+          "operation": "create",
+          "description": "Add a preferences hook that loads/saves settings (theme, avatar type, voice feedback, language) to persistent storage (localStorage) and exposes values to the rest of the UI."
+        },
+        {
+          "path": "frontend/src/components/AppHeader.tsx",
+          "operation": "modify",
+          "description": "Add a Settings access control (button/link) that is reachable from both dashboard and conversation flows."
+        },
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "modify",
+          "description": "Consume preferences (avatar type, voice feedback) so avatar presentation can switch between cartoon vs GIF assets and optional voice playback behavior can be enabled/disabled."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Drive avatar mood/expression updates (neutral/confident/anxious/encouraging) from confidence state with smooth transitions and optional AI speech bubble animation.",
+      "acceptanceCriteria": [
+        "Avatar supports at least 4 discrete mood states and visibly changes when backend mood changes.",
+        "Mood changes occur after each user turn and on AI response render.",
+        "Transitions are animated (e.g., fade/slide) and do not cause layout jumps.",
+        "If speech bubble is implemented, it appears near the avatar when AI messages are displayed."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AvatarPanel.tsx",
+          "operation": "create",
+          "description": "Create the avatar panel that renders mood-based avatar assets (neutral/confident/anxious/encouraging) with smooth transitions and an optional speech bubble for AI dialogue."
+        },
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "modify",
+          "description": "Wire the current computed mood (derived from confidence score) to AvatarPanel and update it after each user turn and whenever an AI message is rendered."
+        },
+        {
+          "path": "frontend/src/lib/analysis.ts",
+          "operation": "modify",
+          "description": "Ensure the analysis output includes a stable mood category mapping (neutral/confident/anxious/encouraging) from confidence/anxiety state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Persist sessions and preferences across reloads, using canister storage when identity is available and local fallback for guests; label device-local progress when unauthenticated.",
+      "acceptanceCriteria": [
+        "Saved sessions persist across page reloads.",
+        "When a user identity is available, sessions are stored keyed by the user principal; otherwise, the app falls back to local persistence and clearly labels that progress is device-local.",
+        "Backend provides APIs to list sessions, fetch a session by id, and save a completed session.",
+        "No additional backend services or databases are introduced."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "create",
+          "description": "Add a login/logout button using the selected authorization component approach (Internet Identity via existing hooks) so users can opt into cross-device persistence. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "create",
+          "description": "Implement first-login profile setup (ask for name) using getCallerUserProfile/saveCallerUserProfile to avoid showing principal IDs; follow the authorization component guidance to prevent modal flash. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useCurrentUserProfile.ts",
+          "operation": "create",
+          "description": "Create a React Query hook to fetch the current user profile and drive profile setup visibility based on authentication state; align with authorization component guidance. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useSavedSessions.ts",
+          "operation": "modify",
+          "description": "Implement dual-path persistence: when authenticated, use the backend actor session list/fetch/save methods; otherwise, store and retrieve sessions locally, and expose a flag so UI can label progress as device-local."
+        },
+        {
+          "path": "frontend/src/components/ProgressTracker.tsx",
+          "operation": "modify",
+          "description": "Display a clear English label when progress is device-local (not logged in) and switch to canister-backed progress when authenticated."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire authentication-aware UI elements globally: include LoginButton and ProfileSetupModal where appropriate, and ensure React Query cached data is cleared on logout per authorization component guidance. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Apply a cohesive modern visual theme across all screens (responsive for tablet/desktop) with a primary palette that is not blue/purple-dominant.",
+      "acceptanceCriteria": [
+        "UI uses a consistent color palette, typography scale, spacing system, and component styling across all screens.",
+        "Primary palette is not blue/purple-dominant unless explicitly requested later.",
+        "Layout is responsive and usable on common tablet widths and desktop widths."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Add global Tailwind-driven theme tokens and base styles for a cohesive modern look (avoid blue/purple primary), including dark/light mode support via a root class toggle."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust Tailwind theme configuration (colors, typography, spacing tokens as needed) to support a cohesive palette and consistent styling across dashboard, conversation, summary, and settings."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "create",
+          "description": "Create a shared layout wrapper (header + responsive container + page spacing) used by all screens to ensure consistent typography, spacing, and responsiveness."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Align dashboard visuals (scenario cards, progress section) to the global theme and ensure responsive layout at tablet and desktop widths."
+        },
+        {
+          "path": "frontend/src/pages/ConversationPage.tsx",
+          "operation": "modify",
+          "description": "Ensure the 3-panel conversation layout responsively adapts (columns on desktop, stacked on tablet) and matches the global theme without layout jumps."
+        },
+        {
+          "path": "frontend/src/pages/SessionSummaryPage.tsx",
+          "operation": "modify",
+          "description": "Ensure summary view typography, spacing, and chart styling matches the global theme and remains readable on tablet and desktop."
+        },
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "modify",
+          "description": "Ensure settings controls match the shared theme and maintain clear, uncluttered layout for tablet/desktop."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Add generated static image assets (logo, scenario icons, avatar states) and render them in the dashboard and conversation avatar mood switching.",
+      "acceptanceCriteria": [
+        "All required generated images are present under frontend/public/assets/generated.",
+        "Dashboard uses the generated scenario icons on the scenario cards.",
+        "Header displays the generated logo.",
+        "Conversation avatar uses the generated avatar-state images for mood switching.",
+        "No generated images are served through the backend."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/social-confidence-simulator-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/scenario-job-interview-icon.dim_256x256.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/scenario-first-date-icon.dim_256x256.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/scenario-party-icon.dim_256x256.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/scenario-networking-icon.dim_256x256.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/avatar-neutral.dim_512x512.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/avatar-confident.dim_512x512.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/avatar-anxious.dim_512x512.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/public/assets/generated/avatar-encouraging.dim_512x512.png",
+          "operation": "create",
+          "description": "Add generated asset file to the project at the specified path."
+        },
+        {
+          "path": "frontend/src/components/AppHeader.tsx",
+          "operation": "modify",
+          "description": "Render the generated logo from frontend/public/assets/generated/social-confidence-simulator-logo.dim_512x512.png alongside the app title in the header."
+        },
+        {
+          "path": "frontend/src/components/ScenarioCard.tsx",
+          "operation": "modify",
+          "description": "Render the generated scenario icons on the scenario cards using the corresponding generated assets under frontend/public/assets/generated/ (job interview, first date, party, networking)."
+        },
+        {
+          "path": "frontend/src/components/AvatarPanel.tsx",
+          "operation": "modify",
+          "description": "Implement mood-based avatar image switching using frontend/public/assets/generated/avatar-neutral.dim_512x512.png, avatar-confident.dim_512x512.png, avatar-anxious.dim_512x512.png, and avatar-encouraging.dim_512x512.png."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Add optional demo features: scenario QR codes (deep-link preselect) and optional AI voice playback using browser text-to-speech controlled by settings.",
+      "acceptanceCriteria": [
+        "Each scenario card can display a QR code that links to a URL including the scenario as a query parameter.",
+        "Opening the app via the QR code URL pre-selects the scenario and opens the conversation screen.",
+        "If voice playback is enabled in settings, the app can read tips/suggested responses using browser TTS; if disabled, no speech is played."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/deeplinks.ts",
+          "operation": "create",
+          "description": "Add helpers to build and parse scenario deep-link URLs (query parameter) so QR codes can open the app with a scenario pre-selected and navigate into conversation."
+        },
+        {
+          "path": "frontend/src/components/ScenarioCard.tsx",
+          "operation": "modify",
+          "description": "Add optional QR code display per scenario that encodes the deep-link URL (scenario query parameter) and ensure scanning opens the app with the scenario pre-selected."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "On load, parse scenario from query parameter (if present) and auto-navigate into the conversation screen with that scenario active to support QR code entry."
+        },
+        {
+          "path": "frontend/src/hooks/useTextToSpeech.ts",
+          "operation": "create",
+          "description": "Implement a browser-native text-to-speech hook (SpeechSynthesis API) gated by the Settings voice feedback preference (no external services)."
+        },
+        {
+          "path": "frontend/src/components/MetricsPanel.tsx",
+          "operation": "modify",
+          "description": "When voice playback is enabled in Settings, provide an option to read back tips/suggested responses using the TTS hook; ensure no speech is played when disabled."
+        }
+      ]
+    }
+  ]
+}

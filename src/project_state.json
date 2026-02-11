@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Design and build a web-based Social Confidence Simulator that lets users practice scenario-based conversations with an AI avatar, provides real-time anxiety/confidence metrics and actionable feedback, and saves session summaries/progress over time.",
+  "architectural_notes": [
+    "Frontend: responsive web UI (React or vanilla JS) with animated avatar (GIF swapping or Ready Player Me iframe) and smooth transitions.",
+    "Backend: Flask API for conversation management (GPT calls), anxiety/confidence analysis, and tip generation; optional Node.js + Socket.io for realtime updates.",
+    "Real-time analysis includes rule-based text signals (filler words, hesitations, self-doubt phrases) and optional voice signals (speaking rate, pauses, pitch/volume variance) using Web Speech API or browser STT.",
+    "UI uses color-coded feedback states (green/yellow/red) and updates avatar mood/expression based on detected confidence/anxiety."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- App logo mark, clean modern flat style (social-confidence-simulator-logo.dim_512x512.png)\n- Scenario icon: job interview, flat illustration (scenario-job-interview-icon.dim_256x256.png)\n- Scenario icon: first date, flat illustration (scenario-first-date-icon.dim_256x256.png)\n- Scenario icon: party, flat illustration (scenario-party-icon.dim_256x256.png)\n- Scenario icon: networking event, flat illustration (scenario-networking-icon.dim_256x256.png)\n- Avatar state: neutral, front-facing character illustration (avatar-neutral.dim_512x512.png)\n- Avatar state: confident, front-facing character illustration (avatar-confident.dim_512x512.png)\n- Avatar state: anxious, front-facing character illustration (avatar-anxious.dim_512x512.png)\n- Avatar state: encouraging, front-facing character illustration (avatar-encouraging.dim_512x512.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-a-home-dashboard-screen-with-app-branding-and-scenario-selection-for-job-interview-first-date-party-networking-event-plus-a-start-practice-now-button-that-starts-a-default-scenario-for-first-time-users",
+      "title": "Create a Home/Dashboard screen with app branding and scenario selection for: Job Interview, First Date, Party, Networking Event, plus a “Start Practice Now” button that starts a default scenario for first-time users.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-conversation-screen-with-a-3-panel-layout-1-ai-avatar-panel-with-mood-expression-display-2-chat-style-conversation-history-ai-and-user-messages-visually-distinct-and-3-metrics-feedback-panel-showing-anxiety-confidence-and-tips",
+      "title": "Implement the Conversation screen with a 3-panel layout: (1) AI Avatar panel with mood/expression display, (2) chat-style conversation history (AI and user messages visually distinct), and (3) metrics & feedback panel showing anxiety/confidence and tips.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-voice-input-option-using-in-browser-speech-to-text-web-speech-api-to-populate-send-the-user-s-message-including-a-microphone-button-and-clear-states-idle-listening-error",
+      "title": "Add a voice input option using in-browser speech-to-text (Web Speech API) to populate/send the user’s message, including a microphone button and clear states (idle/listening/error).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-rule-based-anxiety-confidence-analysis-on-user-text-and-derived-voice-timing-metrics-from-the-frontend-if-available-including-filler-word-count-hesitations-self-doubt-phrases-sentence-length-and-an-overall-anxiety-confidence-score-0-100",
+      "title": "Implement rule-based anxiety/confidence analysis on user text (and derived voice timing metrics from the frontend if available), including: filler word count, hesitations, self-doubt phrases, sentence length, and an overall anxiety/confidence score (0–100).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-retry-response-flow-that-lets-the-user-re-attempt-their-last-message-and-immediately-see-updated-metrics-tips-without-losing-the-full-session-context",
+      "title": "Add a “Retry response” flow that lets the user re-attempt their last message and immediately see updated metrics/tips without losing the full session context.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-session-summary-view-shown-when-a-session-ends-including-full-transcript-a-confidence-score-progression-chart-a-personalized-tips-summary-and-an-option-to-save-the-session-for-progress-tracking",
+      "title": "Implement a Session Summary view shown when a session ends, including: full transcript, a confidence score progression chart, a personalized tips summary, and an option to save the session for progress tracking.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-progress-tracker-that-visualizes-improvement-across-multiple-saved-sessions-e-g-mini-chart-and-session-history-list-and-is-accessible-from-the-dashboard",
+      "title": "Add a Progress Tracker that visualizes improvement across multiple saved sessions (e.g., mini chart and session history list) and is accessible from the dashboard.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-settings-area-with-avatar-type-selection-cartoon-3d-gif-as-ui-choices-implemented-at-least-with-cartoon-gif-swapping-voice-feedback-on-off-language-selection-ui-text-remains-english-language-selection-may-be-a-stored-preference-without-full-localization-and-a-dark-light-mode-toggle",
+      "title": "Add a Settings area with: avatar type selection (cartoon / 3D / GIF as UI choices, implemented at least with cartoon/GIF swapping), voice feedback on/off, language selection (UI text remains English; language selection may be a stored preference without full localization), and a dark/light mode toggle.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-avatar-mood-expression-updates-driven-by-the-computed-confidence-anxiety-state-neutral-confident-anxious-encouraging-including-smooth-transitions-and-optional-speech-bubble-animation-for-ai-dialogue",
+      "title": "Implement avatar mood/expression updates driven by the computed confidence/anxiety state (neutral, confident, anxious, encouraging), including smooth transitions and optional speech bubble animation for AI dialogue.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-persist-sessions-and-user-preferences-in-the-motoko-canister-single-actor-so-progress-and-summaries-remain-available-across-devices-for-the-same-internet-identity-principal-if-ii-is-already-in-the-template-or-otherwise-persist-locally-as-a-fallback-for-unauthenticated-users",
+      "title": "Persist sessions and user preferences in the Motoko canister (single-actor) so progress and summaries remain available across devices for the same Internet Identity principal (if II is already in the template) or otherwise persist locally as a fallback for unauthenticated users.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-cohesive-modern-visual-theme-and-apply-it-consistently-across-dashboard-conversation-summary-and-settings-screens-avoid-blue-purple-as-the-primary-palette",
+      "title": "Create a cohesive, modern visual theme and apply it consistently across dashboard, conversation, summary, and settings screens (avoid blue/purple as the primary palette).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-generated-static-image-assets-logo-scenario-icons-avatar-states-to-the-frontend-and-render-them-in-the-corresponding-ui-locations-store-under-frontend-public-assets-generated-and-reference-them-directly-from-the-frontend",
+      "title": "Add generated static image assets (logo, scenario icons, avatar states) to the frontend and render them in the corresponding UI locations (store under frontend/public/assets/generated and reference them directly from the frontend).",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optional-demo-features-add-qr-codes-on-scenario-cards-that-encode-a-url-to-open-the-app-with-the-scenario-pre-selected-and-add-an-optional-ai-voice-playback-feature-that-can-read-back-suggested-responses-using-browser-text-to-speech-no-external-services",
+      "title": "(Optional demo features) Add QR codes on scenario cards that encode a URL to open the app with the scenario pre-selected, and add an optional AI voice playback feature that can read back suggested responses using browser text-to-speech (no external services).",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Main dashboard with scenario selection (Job Interview/First Date/Party/Networking) and Quick Start flow",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Conversation UI with animated AI avatar panel, chat-style history, and text input",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Voice input (speech-to-text) for user responses",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Real-time metrics & feedback panel (anxiety/confidence score, WPM, filler words, hesitations) with actionable tips and retry response option",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Scenario-specific AI personalities/prompts and natural conversation management using GPT",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Session summary view (transcript, confidence progression graph, personalized tips) with save-for-progress tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Progress tracker showing improvement across multiple sessions (mini chart/history)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "App settings: avatar type selection (cartoon/3D/GIF), voice feedback toggle, language selection, and dark/light mode",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Optional demo features: QR codes on scenario cards, AI voice playback for suggestions, before/after comparison, and optional gamification/leaderboard",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Implement scenario-specific conversation flow in the backend using predefined prompts/personalities per scenario, producing the next AI message based on the session state and the latest user message (no external LLM dependencies).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Social Confidence Simulator",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
